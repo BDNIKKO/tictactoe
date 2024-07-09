@@ -39,11 +39,12 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
   let status;
   if (winner) {
     status = 'Winner: ' + winner.winner;
-  } else if (squares.every(Boolean)) {
+  } else if (squares.every(square => square !== null && square !== undefined)) {
     status = 'Draw';
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
+  
 
   const boardSize = 3;
   const board = [];
