@@ -124,6 +124,7 @@ export default function Game() {
         <Col md="auto">
           <Card className="shadow rounded">
             <Card.Body>
+            <h1 className="text-center mb-4">Tic-Tac-Toe</h1>
               <div className="game-board">
                 <Board
                   xIsNext={xIsNext}
