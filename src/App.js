@@ -1,24 +1,25 @@
 import { useState } from 'react';
-// Imports the useState hook from React.
+// Imports the useState hook from React to manage state in the functional component.
 
 import { Container, Row, Col, Button, ListGroup, Card } from 'react-bootstrap';
-// Imports various components from React Bootstrap for styling and layout.
+// Imports specific components from the react-bootstrap library for layout and styling.
 
 import './index.css';
-// Imports the CSS file for custom styling.
+// Imports a CSS file for custom styling of the components.
 
 function Square({ value, onSquareClick, highlight }) {
-  // Defines a Square component that represents a single square in the tic-tac-toe board.
+  // Defines a functional component Square which represents a single square in the tic-tac-toe board.
   return (
     <button className={`square ${highlight ? 'highlight' : ''}`} onClick={onSquareClick}>
       {value}
     </button>
-    // Renders a button with conditional class for highlighting and an onClick handler.
+    // Renders a button element with dynamic classes and an onClick event handler.
+    // The button displays the value (X, O, or null) and highlights if it's part of the winning combination.
   );
 }
 
 function Board({ xIsNext, squares, onPlay, winningSquares }) {
-  // Defines a Board component that represents the tic-tac-toe board.
+  // Defines a functional component Board that represents the entire tic-tac-toe board.
 
   function renderSquare(i) {
     return (
@@ -28,7 +29,8 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
         onSquareClick={() => handleClick(i)}
         highlight={winningSquares.includes(i)}
       />
-      // Renders a Square component with props for value, onClick handler, and highlight.
+      // Calls the Square component for each square in the board.
+      // Passes the square's value, onClick handler, and highlight status as props.
     );
   }
 
@@ -36,17 +38,25 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
+    // If the game already has a winner or the square is already filled, do nothing.
+    
     const nextSquares = squares.slice();
+    // Creates a copy of the current squares array.
+    
     if (xIsNext) {
       nextSquares[i] = 'X';
     } else {
       nextSquares[i] = 'O';
     }
+    // Updates the square with 'X' or 'O' based on the current player.
+
     onPlay(nextSquares, i);
-    // Handles the click event on a square, updates the board state, and calls onPlay.
+    // Calls the onPlay function with the updated squares and the clicked square index.
   }
 
   const winner = calculateWinner(squares);
+  // Determines if there's a winner based on the current state of the squares.
+
   let status;
   if (winner) {
     status = 'Winner: ' + winner.winner;
@@ -55,9 +65,11 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
-  // Determines the game status (winner, draw, or next player) and stores it in status.
+  // Sets the status message based on the game state: winner, draw, or next player.
 
   const boardSize = 3;
+  // Defines the size of the tic-tac-toe board (3x3).
+
   const board = [];
   for (let row = 0; row < boardSize; row++) {
     const columns = [];
@@ -65,7 +77,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
       columns.push(renderSquare(row * boardSize + col));
     }
     board.push(<div key={row} className="board-row">{columns}</div>);
-    // Renders the tic-tac-toe board as a 3x3 grid using the renderSquare function.
+    // Constructs the board as a grid of squares using the renderSquare function.
   }
 
   return (
@@ -73,28 +85,36 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
       <div className="status">{status}</div>
       {board}
     </>
-    // Renders the game status and the board.
+    // Renders the status message and the board.
   );
 }
 
 export default function Game() {
   const [history, setHistory] = useState([{ squares: Array(9).fill(null), location: null }]);
+  // Initializes the state for the game history, an array of objects with squares and locations.
+
   const [currentMove, setCurrentMove] = useState(0);
+  // Initializes the state for the current move index.
+
   const [isAscending, setIsAscending] = useState(true);
+  // Initializes the state for the move list sort order (ascending or descending).
+
   const xIsNext = currentMove % 2 === 0;
+  // Determines the current player (X or O) based on the current move index.
+
   const currentSquares = history[currentMove].squares;
-  // Defines the Game component with state for history, current move, and sort order.
+  // Gets the squares array for the current move.
 
   function handlePlay(nextSquares, location) {
     const nextHistory = [...history.slice(0, currentMove + 1), { squares: nextSquares, location }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
-    // Updates the game history and current move when a square is clicked.
+    // Updates the game history and sets the current move index after a move is made.
   }
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
-    // Jumps to a specific move in the game history.
+    // Sets the current move index to the specified move.
   }
 
   function toggleSortOrder() {
@@ -115,36 +135,42 @@ export default function Game() {
       >
         {desc}
       </ListGroup.Item>
-      // Renders a list of moves with descriptions and click handlers to jump to moves.
+      // Maps each move in the history to a list item with a description and onClick handler.
     );
   });
 
   if (!isAscending) {
     moves.reverse();
-    // Reverses the move list if isAscending is false.
+    // Reverses the order of the move list if isAscending is false.
   }
 
   const winner = calculateWinner(currentSquares);
   const winningSquares = winner ? winner.line : [];
-  // Calculates the winner and the winning squares.
+  // Calculates the winning squares if there's a winner.
 
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center min-vh-100">
+      {/* Container for centering the game layout */}
       <Row className="justify-content-center">
+        {/* Row for layout */}
         <Col md="auto" className="d-flex flex-column align-items-start">
+          {/* Column for game info */}
           <div className="game-info mb-4">
             <Button variant="primary" onClick={toggleSortOrder} className="mb-3">
               {isAscending ? 'Sort Descending' : 'Sort Ascending'}
             </Button>
+            {/* Button for toggling the move list sort order */}
             <ListGroup>
               {moves}
             </ListGroup>
+            {/* List of moves */}
           </div>
         </Col>
         <Col md="auto">
+          {/* Column for game board */}
           <Card className="shadow rounded">
             <Card.Body>
-            <h1 className="text-center mb-4">Tic-Tac-Toe</h1>
+              <h1 className="text-center mb-4">Tic-Tac-Toe</h1>
               <div className="game-board">
                 <Board
                   xIsNext={xIsNext}
@@ -152,13 +178,14 @@ export default function Game() {
                   onPlay={handlePlay}
                   winningSquares={winningSquares}
                 />
+                {/* Renders the Board component with necessary props */}
               </div>
             </Card.Body>
           </Card>
         </Col>
       </Row>
     </Container>
-    // Renders the game layout with a header, sort button, move list, and game board.
+    // Renders the overall game layout with game info and board.
   );
 }
 
@@ -173,6 +200,8 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  // Defines the winning combinations of squares.
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -180,5 +209,5 @@ function calculateWinner(squares) {
     }
   }
   return null;
-  // Checks if there is a winner by comparing the squares to predefined winning lines.
+  // Checks if any of the winning combinations are met and returns the winner and winning line if so.
 }
