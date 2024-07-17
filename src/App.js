@@ -1,16 +1,25 @@
 import { useState } from 'react';
+// Imports the useState hook from React.
+
 import { Container, Row, Col, Button, ListGroup, Card } from 'react-bootstrap';
+// Imports various components from React Bootstrap for styling and layout.
+
 import './index.css';
+// Imports the CSS file for custom styling.
 
 function Square({ value, onSquareClick, highlight }) {
+  // Defines a Square component that represents a single square in the tic-tac-toe board.
   return (
     <button className={`square ${highlight ? 'highlight' : ''}`} onClick={onSquareClick}>
       {value}
     </button>
+    // Renders a button with conditional class for highlighting and an onClick handler.
   );
 }
 
 function Board({ xIsNext, squares, onPlay, winningSquares }) {
+  // Defines a Board component that represents the tic-tac-toe board.
+
   function renderSquare(i) {
     return (
       <Square
@@ -19,6 +28,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
         onSquareClick={() => handleClick(i)}
         highlight={winningSquares.includes(i)}
       />
+      // Renders a Square component with props for value, onClick handler, and highlight.
     );
   }
 
@@ -33,6 +43,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
       nextSquares[i] = 'O';
     }
     onPlay(nextSquares, i);
+    // Handles the click event on a square, updates the board state, and calls onPlay.
   }
 
   const winner = calculateWinner(squares);
@@ -44,7 +55,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
-  
+  // Determines the game status (winner, draw, or next player) and stores it in status.
 
   const boardSize = 3;
   const board = [];
@@ -54,6 +65,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
       columns.push(renderSquare(row * boardSize + col));
     }
     board.push(<div key={row} className="board-row">{columns}</div>);
+    // Renders the tic-tac-toe board as a 3x3 grid using the renderSquare function.
   }
 
   return (
@@ -61,6 +73,7 @@ function Board({ xIsNext, squares, onPlay, winningSquares }) {
       <div className="status">{status}</div>
       {board}
     </>
+    // Renders the game status and the board.
   );
 }
 
@@ -70,19 +83,23 @@ export default function Game() {
   const [isAscending, setIsAscending] = useState(true);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove].squares;
+  // Defines the Game component with state for history, current move, and sort order.
 
   function handlePlay(nextSquares, location) {
     const nextHistory = [...history.slice(0, currentMove + 1), { squares: nextSquares, location }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
+    // Updates the game history and current move when a square is clicked.
   }
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
+    // Jumps to a specific move in the game history.
   }
 
   function toggleSortOrder() {
     setIsAscending(!isAscending);
+    // Toggles the sort order of the move list.
   }
 
   const moves = history.map((step, move) => {
@@ -98,15 +115,18 @@ export default function Game() {
       >
         {desc}
       </ListGroup.Item>
+      // Renders a list of moves with descriptions and click handlers to jump to moves.
     );
   });
 
   if (!isAscending) {
     moves.reverse();
+    // Reverses the move list if isAscending is false.
   }
 
   const winner = calculateWinner(currentSquares);
   const winningSquares = winner ? winner.line : [];
+  // Calculates the winner and the winning squares.
 
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center min-vh-100">
@@ -138,6 +158,7 @@ export default function Game() {
         </Col>
       </Row>
     </Container>
+    // Renders the game layout with a header, sort button, move list, and game board.
   );
 }
 
@@ -159,4 +180,5 @@ function calculateWinner(squares) {
     }
   }
   return null;
+  // Checks if there is a winner by comparing the squares to predefined winning lines.
 }
